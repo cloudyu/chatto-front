@@ -75,10 +75,20 @@ export default {
   },
   created: function () {
     let token = localStorage.getItem('token')
-    let username = JSON.parse(localStorage.getItem('user')).nickname
+    let user = localStorage.getItem('user')
+    if (user && JSON.parse(user).nickname) {
+      this.username = JSON.parse(user).nickname
+    } else {
+      this.$axios.get(`${this.CONFIG.apiServer}user/`, {
+      }).then((result) => {
+        localStorage.setItem('user', JSON.stringify(result.data.user))
+        this.username = result.data.user
+      }).catch(() => {
+        this.$router.push({ path: `/` })
+      })
+    }
     let self = this
-    if (token && username) {
-      self.username = username
+    if (token) {
       this.$axios.get(`${this.CONFIG.apiServer}game/${this.$route.params.id}`, {
       }).then((result) => {
         let game = result.data.game
@@ -104,6 +114,23 @@ export default {
       localStorage.setItem('jumpto', this.$route.params.id)
       this.$router.push({ path: `/` })
     }
+    Notification.requestPermission().then(function (permission) {
+      if (permission === 'granted') {
+        self.$notify({
+          title: 'Get notification permission!',
+          type: 'success',
+          message: 'The message will be sent using system notifications.'
+        })
+      } else {
+        self.$notify({
+          title: 'System notification is disabled',
+          type: 'warning',
+          horizontalAlign: 'left',
+          verticalAlign: 'bottom',
+          message: 'The message will appear in here.'
+        })
+      }
+    })
   },
   data: function () {
     return {
@@ -236,22 +263,31 @@ export default {
       console.log('connection closed (' + e.code + ')')
       this.WSinit()
     },
-    Notification (title, body) {
-      console.log(icon)
+    Notification (title, body, important) {
+      let self = this
       Notification.requestPermission().then(function (permission) {
-        if (permission === "granted") {
+        if (permission === 'granted') {
           var options = {
-            body: body,
+            body: body
           }
-          var notification = new Notification(title, options);
+          // eslint-disable-next-line
+          new Notification(title, options)
+        } else {
+          self.$notify({
+            title: title,
+            type: important ? 'danger' : 'warning',
+            horizontalAlign: 'left',
+            verticalAlign: 'bottom',
+            message: body
+          })
         }
-      });
+      })
     },
     NotificationTitle (on) {
       var remind = '❣️❗❗❗❣️ '
       if (on) {
         if (!this.interval) {
-          this.interval = setInterval(function(){ 
+          this.interval = setInterval(function () {
             let title = document.title
             if (title.indexOf(remind) === 0) {
               title = title.substr(remind.length)
@@ -259,7 +295,7 @@ export default {
               title = remind + title
             }
             document.title = title
-          }, 1000);
+          }, 1000)
         }
       } else {
         clearInterval(this.interval)
@@ -270,14 +306,12 @@ export default {
         }
         this.interval = false
       }
-
     }
   },
   mounted: function () {
     let self = this
     window.addEventListener('message', function (e) {
       let name, counts, sender
-      console.log(e.data.eventName, e.data)
       switch (e.data.eventName) {
         case 'notification':
           name = e.data.data.notification.payload.name
@@ -286,8 +320,8 @@ export default {
           self.$set(self.notify[name], 'counts', ++counts)
           sender = e.data.data.notification.payload.sender.username
           if (sender !== self.username) {
-            self.Notification ('Someone Mentioned You', e.data.data.notification.text)
-            self.NotificationTitle (true)
+            self.Notification('Someone Mentioned You', e.data.data.notification.text, true)
+            self.NotificationTitle(true)
           }
           break
         case 'new-message':
@@ -296,9 +330,9 @@ export default {
           self.$set(self.notify[name], 'counts', ++counts)
           sender = e.data.data.u.username
           if (sender !== self.username) {
-            if (e.data.data.msg.indexOf(`@${self.username} `) === -1){
-              self.Notification ('New Message', e.data.data.u.username + ': ' + e.data.data.msg)
-              self.NotificationTitle (true)
+            if (e.data.data.msg.indexOf(`@${self.username} `) === -1) {
+              self.Notification('New Message', e.data.data.u.username + ': ' + e.data.data.msg, false)
+              self.NotificationTitle(true)
             }
           }
           break
