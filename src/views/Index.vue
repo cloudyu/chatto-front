@@ -28,18 +28,18 @@ export default {
   },
   created: function () {
     let token = localStorage.getItem('token')
-    let user = localStorage.getItem('user')
-    if (!token) {
+    let user
+    if (!token || token.indexOf('.') === -1 || token.indexOf('.') === token.lastIndexOf('.')) {
+      localStorage.setItem('token', '')
       this.isLogin = false
-    } else if (!user) {
-      this.$axios.get(`${this.CONFIG.apiServer}user/`, {
-      }).then((result) => {
-        this.isLogin = true
-      }).catch(() => {
-        this.isLogin = false
-      })
     } else {
-      this.isLogin = true
+      user = JSON.parse(atob(token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'))))
+      if (user.exp < new Date().getTime() / 1000) {
+        localStorage.setItem('token', '')
+        this.isLogin = false
+      } else {
+        this.isLogin = true
+      }
     }
   },
   components: {

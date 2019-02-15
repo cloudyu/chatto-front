@@ -75,45 +75,53 @@ export default {
   },
   created: function () {
     let token = localStorage.getItem('token')
-    let user = localStorage.getItem('user')
-    if (user && JSON.parse(user).nickname) {
-      this.username = JSON.parse(user).nickname
-    } else {
-      this.$axios.get(`${this.CONFIG.apiServer}user/`, {
-      }).then((result) => {
-        localStorage.setItem('user', JSON.stringify(result.data.user))
-        this.username = result.data.user
-      }).catch(() => {
-        this.$router.push({ path: `/` })
+    let user
+    if (!token || token.indexOf('.') === -1 || token.indexOf('.') === token.lastIndexOf('.')) {
+      this.$notify({
+        title: 'User',
+        type: 'warning',
+        message: 'Need to log in.'
       })
-    }
-    let self = this
-    if (token) {
-      this.$axios.get(`${this.CONFIG.apiServer}game/${this.$route.params.id}`, {
-      }).then((result) => {
-        let game = result.data.game
-        let challenges = result.data.challenges
-        game.chatUrl = `${self.CONFIG.chat}${game.rocket_chat}`
-        self.$set(self.notify, game.rocket_chat, { important: false, counts: 0 })
-        self.game = game
-        challenges.map((p) => {
-          p.chatUrl = 'about:blank'
-          p.codimdUrl = 'about:blank'
-          p.isShow = false
-        })
-        self.challenges = challenges
-        self.owner = result.data.owner
-        self.types = result.data.types
-        self.selectedType = [...self.types]
-        document.title = self.game.name
-        this.WSinit()
-      }).catch(() => {
-        self.$refs.lockModal.show()
-      })
-    } else {
+      localStorage.setItem('token', '')
       localStorage.setItem('jumpto', this.$route.params.id)
       this.$router.push({ path: `/` })
+    } else {
+      user = JSON.parse(atob(token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'))))
+      if (user.exp < new Date().getTime() / 1000) {
+        this.$notify({
+          title: 'User',
+          type: 'warning',
+          message: 'Token has expired.'
+        })
+        localStorage.setItem('token', '')
+        localStorage.setItem('jumpto', this.$route.params.id)
+        this.$router.push({ path: `/` })
+      }
     }
+
+    let self = this
+    self.username = user.username
+    this.$axios.get(`${this.CONFIG.apiServer}game/${this.$route.params.id}`, {
+    }).then((result) => {
+      let game = result.data.game
+      let challenges = result.data.challenges
+      game.chatUrl = `${self.CONFIG.chat}${game.rocket_chat}`
+      self.$set(self.notify, game.rocket_chat, { important: false, counts: 0 })
+      self.game = game
+      challenges.map((p) => {
+        p.chatUrl = 'about:blank'
+        p.codimdUrl = 'about:blank'
+        p.isShow = false
+      })
+      self.challenges = challenges
+      self.owner = result.data.owner
+      self.types = result.data.types
+      self.selectedType = [...self.types]
+      document.title = self.game.name
+      this.WSinit()
+    }).catch(() => {
+      self.$refs.lockModal.show()
+    })
     Notification.requestPermission().then(function (permission) {
       if (permission === 'granted') {
         self.$notify({
@@ -328,6 +336,9 @@ export default {
           name = e.data.data.name
           counts = self.notify[name].counts
           self.$set(self.notify[name], 'counts', ++counts)
+          if (e.data.data.t === 'au') { // 加入房间事件
+            break
+          }
           sender = e.data.data.u.username
           if (sender !== self.username) {
             if (e.data.data.msg.indexOf(`@${self.username} `) === -1) {

@@ -57,10 +57,8 @@ Vue.prototype.$axios.interceptors.response.use((response) => {
       type: 'danger'
     })
     localStorage.setItem('token', '')
-    localStorage.setItem('user', '')
   } else if (error.response.status === 403 && error.response.data.detail) {
     localStorage.setItem('token', '')
-    localStorage.setItem('user', '')
   } else if (!error.response.data.success && error.response.data.error) {
     if (typeof (error.response.data.error) === 'object') {
       for (var msgType in error.response.data.error) {

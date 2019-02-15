@@ -12,7 +12,7 @@
       <b-navbar-nav class="ml-auto">
         <b-nav-item-dropdown right>
           <template slot="button-content">
-            <img :src="user.avatar" class="d-inline-block mx-1" width="30" /><em>{{user.nickname}}</em>
+            <img :src="user.avatar" class="d-inline-block mx-1" width="30" /><em>{{user.username}}</em>
           </template>
           <b-dropdown-item href="#" @click="signout">Signout</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -25,30 +25,32 @@ export default {
   name: 'topnav',
   data: function () {
     return {
-      user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : { avatar: '', nickname: '' }
+      user: { avatar: '', nickname: '' }
     }
   },
   created: function () {
     let token = localStorage.getItem('token')
-    let user = localStorage.getItem('user')
-    let self = this
-    console.log(self)
-    if (token && !user) {
-      this.$axios.get(`${this.CONFIG.apiServer}user/`, {
-      }).then((result) => {
-        localStorage.setItem('user', JSON.stringify(result.data.user))
-        self.user = result.data.user
-      }).catch(() => {
-        this.$router.push({ path: `/` })
-      })
+    let user
+    if (!token || token.indexOf('.') === -1 || token.indexOf('.') === token.lastIndexOf('.')) {
+      localStorage.setItem('token', '')
+      this.$router.push({ path: `/` })
     } else {
-      this.isLogin = false
+      user = JSON.parse(atob(token.substring(token.indexOf('.') + 1, token.lastIndexOf('.'))))
+      if (user.exp < new Date().getTime() / 1000) {
+        this.$notify({
+          title: 'User',
+          type: 'warning',
+          message: 'Token has expired.'
+        })
+        localStorage.setItem('token', '')
+        this.$router.push({ path: `/` })
+      }
     }
+    this.user = user
   },
   methods: {
     signout: function () {
       localStorage.setItem('token', '')
-      localStorage.setItem('user', '')
       this.$router.push({ path: `/` })
     }
   }
