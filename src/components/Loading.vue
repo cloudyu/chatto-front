@@ -1,54 +1,54 @@
 <template>
   <div class="cssload-loader">
-  <div class="cssload-top">
-  <div class="cssload-square">
-    <div class="cssload-square">
-    <div class="cssload-square">
+    <div class="cssload-top">
       <div class="cssload-square">
-      <div class="cssload-square"><div class="cssload-square">
+        <div class="cssload-square">
+        <div class="cssload-square">
+          <div class="cssload-square">
+          <div class="cssload-square"><div class="cssload-square">
 
-      </div></div>
+          </div></div>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
-    </div>
-  </div>
-  </div>
-  <div class="cssload-bottom">
-  <div class="cssload-square">
-    <div class="cssload-square">
-    <div class="cssload-square">
+    <div class="cssload-bottom">
       <div class="cssload-square">
-      <div class="cssload-square"><div class="cssload-square">
-      </div></div>
+        <div class="cssload-square">
+        <div class="cssload-square">
+          <div class="cssload-square">
+          <div class="cssload-square"><div class="cssload-square">
+          </div></div>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
-    </div>
-  </div>
-  </div>
-  <div class="cssload-left">
-  <div class="cssload-square">
-    <div class="cssload-square">
-    <div class="cssload-square">
+    <div class="cssload-left">
       <div class="cssload-square">
-      <div class="cssload-square"><div class="cssload-square">
-      </div></div>
+        <div class="cssload-square">
+          <div class="cssload-square">
+            <div class="cssload-square">
+            <div class="cssload-square"><div class="cssload-square">
+            </div></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    </div>
-  </div>
-  </div>
-  <div class="cssload-right">
-  <div class="cssload-square">
-    <div class="cssload-square">
-    <div class="cssload-square">
+    <div class="cssload-right">
       <div class="cssload-square">
-      <div class="cssload-square"><div class="cssload-square">
-      </div></div>
+        <div class="cssload-square">
+        <div class="cssload-square">
+          <div class="cssload-square">
+          <div class="cssload-square"><div class="cssload-square">
+          </div></div>
+          </div>
+        </div>
+        </div>
       </div>
     </div>
-    </div>
-  </div>
-  </div>
   </div>
 </template>
 
@@ -61,9 +61,9 @@ export default {
 <style>
 .cssload-loader{
   position: relative;
-  width: 400px;
-  height: 600px;
-  margin:auto;
+  width: 0;
+  height: 400px;
+  margin: auto;
 }
 .cssload-square {
   width: 10px;
