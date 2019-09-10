@@ -26,22 +26,22 @@
             :per-page="perPage"
             @filtered="Filtered"
             ref="editTable">
-      <template slot="name" slot-scope="row">
+      <template v-slot:cell(name)="row">
         <b-form-input :disabled="row.item.id!==''" type="text" v-model="row.item.name" size="sm"/>
       </template>
-      <template slot="type" slot-scope="row">
+      <template v-slot:cell(type)="row">
         <div @dblclick="ChangeType(row)" class="editType">
           <b-form-input v-if="row.item.customizeType"  v-model="row.item.type" size="sm"/>
           <b-form-select v-else v-model="row.item.type" :options="types" size="sm"/>
         </div>
       </template>
-      <template slot="source" slot-scope="row">
+      <template v-slot:cell(source)="row">
         <b-form-input type="number" v-model="row.item.source" size="sm"/>
       </template>
-      <template slot="status" slot-scope="row">
+      <template v-slot:cell(status)="row">
         <b-form-select v-model="row.item.status" :options="status" size="sm"/>
       </template>
-      <template slot="id" slot-scope="row">
+      <template v-slot:cell(id)="row">
         <div v-if="row.value">
           <b-button size="sm" @click.stop="Save(row)" class="mr-1" variant="primary">
             Save
