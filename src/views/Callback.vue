@@ -4,7 +4,10 @@
     <b-row align-h="center" id="index">
       <b-jumbotron>
         <template slot="header">
-          <b>{{msg}}</b>
+          <b>{{title}}</b>
+        </template>
+        <template slot="lead">
+          {{msg}}
         </template>
       </b-jumbotron>
     </b-row>
@@ -16,10 +19,12 @@ export default {
   name: 'callback',
   data: function () {
     return {
-      msg: 'Loading'
+      title: 'Loading',
+      msg: 'You can log in now. Please be patient!'
     }
   },
   created: function () {
+    return 
     if (this.$route.query.code) {
       this.$axios.get(`${this.CONFIG.apiServer}user/callback`, {
         params: {
@@ -43,15 +48,3 @@ export default {
   }
 }
 </script>
-<style>
-#index {
-  margin-top: 12%;
-}
-#index .jumbotron{
-  background-color: #e9ecefe0;
-  min-width: 800px;
-}
-#index .float-right{
-  margin-right: 20px;
-}
-</style>

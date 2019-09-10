@@ -49,11 +49,11 @@ export default {
 </script>
 <style>
 #index {
-  margin-top: 12%;
+  margin: 13% 2% 0 2%;
+  
 }
 #index .jumbotron{
-  background-color: #e9ecefe0;
-  min-width: 800px;
+  background-color: #e9ecef;
 }
 #index .float-right{
   margin-right: 20px;
