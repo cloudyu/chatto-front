@@ -6,7 +6,7 @@
       </b-col>
     </b-row>
     <b-row  class="mx-5 my-2">
-        <b-col cols="4" v-for="game in games" :key="game.id">
+        <b-col md="6" lg="4" cols="12" v-for="game in games" :key="game.id">
           <b-card class="my-3"
             header-bg-variant="transparent">
             <h6 slot="header" class="mb-0">
