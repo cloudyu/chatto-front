@@ -1,6 +1,6 @@
 <template>
   <b-row id="pad">
-    <b-col cols="auto">
+    <b-col class="left" cols="auto" :style="{display: leftHidden? 'none': 'block'}">
       <b-row class="text-center"><b-col><h2><b><router-link to="/" tag="div">Chatto-Pad</router-link></b></h2><hr class="my-1"/></b-col>
         <b-col class="p-0">
           <b-form-checkbox-group  v-model="selectedType" button-variant="outline-primary" buttons size="sm">
@@ -11,33 +11,33 @@
           <b-form-checkbox button-variant="outline-warning" :value="0" >UNSOLVED</b-form-checkbox>
         </b-form-checkbox-group>
       </b-col></b-row>
-      <b-row class="text-center m-0 pl-1">
-        <b-col class="p-0">
-        <b-form-radio-group id="switchPad" v-model="viewPad" buttons stacked button-variant="outline-primary" size="lg" class="w-100">
-          <b-form-radio :value="0" button-variant="success">
-              <div v-on:click="ShowPad(game)" class="text-left">
-                {{game.name}}
-                <b-badge pill :variant="game.rocket_chat && notify[game.rocket_chat].important?'danger':'dark'" class="float-right">{{game.rocket_chat && notify[game.rocket_chat].counts ? notify[game.rocket_chat].counts : 0}}</b-badge>
-                <b-badge variant="light" v-b-modal.editChallenge class="float-right">Edit</b-badge>
-              </div>
-          </b-form-radio>
-          <b-form-radio v-for="(challenge, index) in challenges" :key="challenge.id"
-          :value="index + 1" v-show="selectedType.indexOf(challenge.type.toLowerCase()) > -1 && selectedStatus.indexOf(challenge.status) > -1">
-              <div class="w-100 text-left" v-on:click="ShowPad(challenge)">
-                <b-badge :variant="challenge.status?'success':'warning'" class="text-uppercase">{{challenge.type.substr(0,3)}}</b-badge>
-                <b-badge variant="dark" v-if="challenge.source">{{challenge.source}}</b-badge>
-                {{challenge.name}}
-                  <b-badge v-if="!challenge.isShow" pill variant="secondary" class="float-right">?</b-badge>
-                  <b-badge v-else pill
-                    :variant="challenge.rocket_chat && notify[challenge.rocket_chat].important?'danger':'info'" class="float-right"
-                    v-on:click.stop="ClosePad($event, challenge)"><span>{{notify[challenge.rocket_chat].counts}}</span></b-badge>
-              </div>
-          </b-form-radio>
-        </b-form-radio-group>
+      <b-row class="text-center m-0 p-0 pl-1">
+        <b-col id="switchPad" class="p-0" :style="{height: this.switchHeight + 'px'}">
+          <b-form-radio-group v-model="viewPad" buttons stacked button-variant="outline-primary" size="lg" class="w-100">
+            <b-form-radio :value="0" button-variant="success">
+                <div v-on:click="ShowPad(game)" class="text-left">
+                  {{game.name}}
+                  <b-badge pill :variant="game.rocket_chat && notify[game.rocket_chat].important?'danger':'dark'" class="float-right">{{game.rocket_chat && notify[game.rocket_chat].counts ? notify[game.rocket_chat].counts : 0}}</b-badge>
+                  <b-badge variant="light" v-b-modal.editChallenge class="float-right">Edit</b-badge>
+                </div>
+            </b-form-radio>
+            <b-form-radio v-for="(challenge, index) in challenges" :key="challenge.id"
+            :value="index + 1" v-show="selectedType.indexOf(challenge.type.toLowerCase()) > -1 && selectedStatus.indexOf(challenge.status) > -1">
+                <div class="w-100 text-left" v-on:click="ShowPad(challenge)">
+                  <b-badge :variant="challenge.status?'success':'warning'" class="text-uppercase">{{challenge.type.substr(0,3)}}</b-badge>
+                  <b-badge variant="dark" v-if="challenge.source">{{challenge.source}}</b-badge>
+                  {{challenge.name}}
+                    <b-badge v-if="!challenge.isShow" pill variant="secondary" class="float-right">?</b-badge>
+                    <b-badge v-else pill
+                      :variant="challenge.rocket_chat && notify[challenge.rocket_chat].important?'danger':'info'" class="float-right"
+                      v-on:click.stop="ClosePad($event, challenge)"><span>{{notify[challenge.rocket_chat].counts}}</span></b-badge>
+                </div>
+            </b-form-radio>
+          </b-form-radio-group>
         </b-col>
       </b-row>
     </b-col>
-    <b-col class="pl-1">
+    <b-col class="right pl-1">
       <b-tabs nav-class="d-none" v-model="viewPad" >
         <b-tab active>
           <pad :codimd="game.codimdUrl" :chat="game.chatUrl" name="0"></pad>
@@ -46,7 +46,15 @@
           <pad v-if="challenge.isShow" :codimd="challenge.codimdUrl" :chat="challenge.chatUrl"></pad>
         </b-tab>
       </b-tabs>
+
     </b-col>
+    <b-row id="toggle-switch">
+      <b-button variant="info" pill v-on:click="leftHidden = !leftHidden;">
+        <font-awesome-icon v-show="leftHidden" icon="angle-double-right" ></font-awesome-icon>
+        <font-awesome-icon v-show="!leftHidden" icon="angle-double-left"></font-awesome-icon>
+      </b-button>
+    </b-row>
+
     <b-modal id="editChallenge" title="Edit Challenge" size="lg" @show="LoadEditData">
         <editpad :items="editChallenges" :types="types" :owner="owner"></editpad>
     </b-modal>
@@ -59,13 +67,13 @@
         </b-col>
       </b-row>
     </b-modal>
-
   </b-row>
 </template>
 
 <script>
 import pad from '@/components/Pad'
 import editpad from '@/components/EditPad'
+import { fips } from 'crypto';
 
 export default {
   name: 'game',
@@ -151,7 +159,9 @@ export default {
       join_code: '',
       notify: {},
       challenges: [],
-      editChallenges: []
+      editChallenges: [],
+      switchHeight: document.documentElement.clientHeight - 151,
+      leftHidden: false
     }
   },
   methods: {
@@ -226,7 +236,12 @@ export default {
       }
       // console.log(this.challenges)
     },
+    resize: function (e) {
+      this.switchHeight = document.documentElement.clientHeight - 151;
+      this.leftHidden = this.leftHidden || window.outerWidth < 1000;
+    },
     WSinit () { // 初始化weosocket
+      return true;
       const WS = this.CONFIG.wsServer + `${this.$route.params.id}?token=` + localStorage.getItem('token')
       this.WS = new WebSocket(WS)
       this.WS.onopen = this.WSopen
@@ -318,6 +333,8 @@ export default {
   },
   mounted: function () {
     let self = this
+    this.resize();
+    window.addEventListener('resize',this.resize);
     window.addEventListener('message', function (e) {
       let name, counts, sender
       switch (e.data.eventName) {
@@ -354,6 +371,8 @@ export default {
         default:
       }
     })
+  },
+  computed: {
   }
 }
 </script>
@@ -362,30 +381,35 @@ export default {
 #switchPad .btn-outline-primary{
   border-top-width :0;
 }
+#pad>.left {
+  top: 0;
+  z-index: 99;
+  background: white;
+}
 #pad h2 {
   margin-top: 10px;
 }
-#pad>.col-auto>.row{
+#pad>.left>.row{
   padding-bottom: 10px;
 }
-#pad>.col-auto>.row .btn-group{
+#pad>.left>.row .btn-group{
   padding-top: 5px;
 }
-#pad>.col-auto>.row .badge.float-right{
+#pad>.left>.row .badge.float-right{
   margin-top: 6px;
   margin-right: -5px;
 }
-#pad>.col-auto>.row .badge.badge-primary{
+#pad>.left>.row .badge.badge-primary{
   margin-left: -10px;
 }
-#pad>.col-auto>.row .badge-light.float-right{
+#pad>.left>.row .badge-light.float-right{
   margin-right: 5px;
 }
 #pad .badge{
   font-family: Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;
   margin-left: 5px;
 }
-#pad>.col-auto{
+#pad>.left{
   max-width: 300px;
 }
 #switchPad .btn-outline-primary .float-right:not(.badge-secondary):hover {
@@ -397,4 +421,41 @@ export default {
 #switchPad .btn-outline-primary .float-right:not(.badge-secondary):hover:after {
     content: 'X';
 }
+#switchPad {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#switchPad label:first-child {
+    position: fixed;
+    width: 266px;
+    top: 150px;
+    z-index: 10
+}
+#switchPad div:first-child {
+  padding-top: 47px;
+}
+/* 滚动条美化 */
+#switchPad::-webkit-scrollbar {
+    width: 0px;
+}
+#switchPad::-webkit-scrollbar-thumb {
+    background-color: #007bff;
+    border-radius: 10px;
+}
+#toggle-switch {
+  position: fixed;
+  left: 60px;
+  bottom: 80px;
+  z-index: 100;
+  background: transparent;
+}
+#toggle-switch button{
+  width: 38px;
+}
+@media screen and (max-width: 780px) {
+  #pad>.left {
+    margin-right: -300px;
+  }
+}
+
 </style>
