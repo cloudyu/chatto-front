@@ -24,7 +24,6 @@ export default {
     }
   },
   created: function () {
-    return 
     if (this.$route.query.code) {
       this.$axios.get(`${this.CONFIG.apiServer}user/callback`, {
         params: {
