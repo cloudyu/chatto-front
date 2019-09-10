@@ -1,6 +1,6 @@
 <template>
 <div class="game-pad">
-  <div @mousemove="resize" @mouseup="resizeEnd" @touchend="resizeEnd">
+  <div @mousemove="resize" @mouseup="resizeEnd" class="resize-mark">
     <div class="loading" :height="this.iframeHeight + 'px'">
       <transition name="fade">
         <loading v-show="this.iframeCount > 0" />
@@ -83,10 +83,13 @@ export default {
     },
     resizeStart: function (e) {
       this.resizeOn = true
+      console.log(this.resizeOn)
       e.preventDefault()
     },
     resizeEnd: function (e) {
       this.resizeOn = false
+      console.log(this.resizeOn)
+
       e.preventDefault()
     },
     resize: function (e) {
@@ -94,13 +97,17 @@ export default {
         if (e.buttons === 0) {
           this.resizeOn = false
         }
-        if (e.srcElement.className ==  'game-pad') {
+        console.log(e)
+
+        if (e.srcElement.className ==  'resize-mark') {
           let iframeWidth = e.layerX / e.target.clientWidth * 100
           let minWidth = 100 - (779 / e.target.clientWidth * 100)
           iframeWidth = iframeWidth > 100 ? 100 : iframeWidth
           iframeWidth = iframeWidth < minWidth ? minWidth : iframeWidth
           this.leftWidth = iframeWidth
           this.rightWidth = 100 - iframeWidth
+                  console.log(iframeWidth)
+
         }
         e.preventDefault()
       }
