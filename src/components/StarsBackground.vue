@@ -1,24 +1,45 @@
 <template>
-  <div id="bg-start">
+  <div id="bg-start" :style="{height: height + 'px'}">
     <div id='stars'></div>
     <div id='stars2'></div>
     <div id='stars3'></div>
   </div>
 </template>
+<script>
+export default {
+  name: 'starsBackground',
+  data: function () {
+    return {
+      height: document.documentElement.clientHeight,
+    }
+  },
+  mounted: function () {
+    let self = this
+    self.resizeFunc = function (e) {
+      self.height = document.documentElement.clientHeight
+    }
+    window.addEventListener('resize', self.resizeFunc);
+  },
+  destroyed: function(){
+    window.removeEventListener('resize', self.resizeFunc);
+  },
+}
+</script>
+
 <style>
 #bg-start {
   position: absolute;
   top: 0px;
   left: 0px;
-  height: 10000px;
   width: 100%;
   background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
   z-index: -1;
   pointer-events: none;
+  overflow: hidden;
 }
 body, html {
     height: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 #stars {
     width: 1px;
