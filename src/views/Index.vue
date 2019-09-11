@@ -50,7 +50,6 @@ export default {
 <style>
 #index {
   margin: 13% 2% 0 2%;
-  
 }
 #index .jumbotron{
   background-color: #e9ecef;

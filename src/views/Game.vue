@@ -73,7 +73,6 @@
 <script>
 import pad from '@/components/Pad'
 import editpad from '@/components/EditPad'
-import { fips } from 'crypto';
 
 export default {
   name: 'game',
@@ -237,11 +236,10 @@ export default {
       // console.log(this.challenges)
     },
     resize: function (e) {
-      this.switchHeight = document.documentElement.clientHeight - 151;
-      this.leftHidden = this.leftHidden || window.outerWidth < 1000;
+      this.switchHeight = document.documentElement.clientHeight - 151
+      this.leftHidden = this.leftHidden || window.outerWidth < 1000
     },
     WSinit () { // 初始化weosocket
-      return true;
       const WS = this.CONFIG.wsServer + `${this.$route.params.id}?token=` + localStorage.getItem('token')
       this.WS = new WebSocket(WS)
       this.WS.onopen = this.WSopen
@@ -333,8 +331,8 @@ export default {
   },
   mounted: function () {
     let self = this
-    this.resize();
-    window.addEventListener('resize',this.resize);
+    this.resize()
+    window.addEventListener('resize', this.resize)
     window.addEventListener('message', function (e) {
       let name, counts, sender
       switch (e.data.eventName) {

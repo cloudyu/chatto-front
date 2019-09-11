@@ -54,13 +54,13 @@ export default {
       resizeOn: false,
       rocketShow: true,
       codimdShow: true,
-      resizeFunc: function(){}
+      resizeFunc: function () {}
     }
   },
   mounted: function () {
     let self = this
     self.resizeFunc = function (e) {
-      self.iframeHeight = document.documentElement.clientHeight 
+      self.iframeHeight = document.documentElement.clientHeight
       if (document.documentElement.clientWidth < 779) {
         self.leftWidth = 100
         self.rightWidth = 100
@@ -68,14 +68,14 @@ export default {
       } else {
         self.leftWidth = 65
         self.rightWidth = 35
-        self.rocketShow = self.codimdShow = true;
+        self.rocketShow = self.codimdShow = true
       }
     }
-    self.resizeFunc();
-    window.addEventListener('resize', self.resizeFunc);
+    self.resizeFunc()
+    window.addEventListener('resize', self.resizeFunc)
   },
-  destroyed: function(){
-    window.removeEventListener('resize', self.resizeFunc);
+  destroyed: function () {
+    window.removeEventListener('resize', self.resizeFunc)
   },
   methods: {
     iframeLoad: function (e) {
@@ -83,13 +83,10 @@ export default {
     },
     resizeStart: function (e) {
       this.resizeOn = true
-      console.log(this.resizeOn)
       e.preventDefault()
     },
     resizeEnd: function (e) {
       this.resizeOn = false
-      console.log(this.resizeOn)
-
       e.preventDefault()
     },
     resize: function (e) {
@@ -97,17 +94,13 @@ export default {
         if (e.buttons === 0) {
           this.resizeOn = false
         }
-        console.log(e)
-
-        if (e.srcElement.className ==  'resize-mark') {
+        if (e.srcElement.className === 'resize-mark') {
           let iframeWidth = e.layerX / e.target.clientWidth * 100
           let minWidth = 100 - (779 / e.target.clientWidth * 100)
           iframeWidth = iframeWidth > 100 ? 100 : iframeWidth
           iframeWidth = iframeWidth < minWidth ? minWidth : iframeWidth
           this.leftWidth = iframeWidth
           this.rightWidth = 100 - iframeWidth
-                  console.log(iframeWidth)
-
         }
         e.preventDefault()
       }
@@ -140,7 +133,6 @@ export default {
 .game-pad .rocket-chat {
   max-width: 779px;
 }
-
 .game-pad iframe {
   margin-bottom: -6px;
 }
@@ -161,7 +153,7 @@ export default {
   .game-pad .loading {
     width: 50%;
     position: absolute;
-    left: 120px;    
+    left: 120px;
   }
 }
 </style>

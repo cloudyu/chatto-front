@@ -4,12 +4,19 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import App from './App.vue'
 import Config from './Config.vue'
 import router from './router'
 import axios from 'axios'
 import Notify from 'vue-notifyjs'
 import 'vue-notifyjs/themes/material.css'
+
+library.add(fas)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 router.afterEach((to, from, next) => {
   if (to.meta.title) {

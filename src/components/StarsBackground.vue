@@ -10,7 +10,7 @@ export default {
   name: 'starsBackground',
   data: function () {
     return {
-      height: document.documentElement.clientHeight,
+      height: document.documentElement.clientHeight
     }
   },
   mounted: function () {
@@ -18,11 +18,11 @@ export default {
     self.resizeFunc = function (e) {
       self.height = document.documentElement.clientHeight
     }
-    window.addEventListener('resize', self.resizeFunc);
+    window.addEventListener('resize', self.resizeFunc)
   },
-  destroyed: function(){
-    window.removeEventListener('resize', self.resizeFunc);
-  },
+  destroyed: function () {
+    window.removeEventListener('resize', self.resizeFunc)
+  }
 }
 </script>
 
