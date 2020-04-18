@@ -55,8 +55,7 @@
             Add Challenge
           </b-button>
         </div>
-      </template>
-    </b-table>
+      </template>    </b-table>
     <b-row>
       <b-col class="text-center">
         <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage" align="center" />

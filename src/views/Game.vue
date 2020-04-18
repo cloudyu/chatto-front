@@ -15,7 +15,7 @@
         <b-col id="switchPad" class="p-0" :style="{height: this.switchHeight + 'px'}">
           <b-form-radio-group v-model="viewPad" buttons stacked button-variant="outline-primary" size="lg" class="w-100">
             <b-form-radio :value="0" button-variant="success">
-                <div v-on:click="ShowPad(game)" class="text-left">
+                <div v-on:click="ShowPad(game)" class="text-left" style="padding-top:px">
                   {{game.name}}
                   <b-badge pill :variant="game.rocket_chat && notify[game.rocket_chat].important?'danger':'dark'" class="float-right">{{game.rocket_chat && notify[game.rocket_chat].counts ? notify[game.rocket_chat].counts : 0}}</b-badge>
                   <b-badge variant="light" v-b-modal.editChallenge class="float-right">Edit</b-badge>
@@ -80,6 +80,9 @@ export default {
     pad,
     editpad
   },
+  updated: function () {
+    document.getElementById('switchPad').children[0].style.paddingTop = `${document.getElementById('switchPad').children[0].children[0].offsetHeight}px`
+  },
   created: function () {
     let token = localStorage.getItem('token')
     let user
@@ -125,6 +128,8 @@ export default {
       self.types = result.data.types
       self.selectedType = [...self.types]
       document.title = self.game.name
+      
+
       this.WSinit()
     }).catch(() => {
       self.$refs.lockModal.show()
@@ -160,7 +165,8 @@ export default {
       challenges: [],
       editChallenges: [],
       switchHeight: document.documentElement.clientHeight - 151,
-      leftHidden: false
+      leftHidden: false,
+      wsCounts: 3
     }
   },
   methods: {
@@ -248,6 +254,7 @@ export default {
       this.WS.onclose = this.WSclose
     },
     WSopen () {
+      this.wsCounts = 3
       console.log('WS Connect Success')
     },
     WSerror (e) { // 错误
@@ -282,7 +289,9 @@ export default {
     },
     WSclose (e) { // 关闭
       console.log('connection closed (' + e.code + ')')
-      this.WSinit()
+      if (--this.wsCounts > 0) {
+        this.WSinit()
+      }
     },
     Notification (title, body, important) {
       let self = this
@@ -429,6 +438,7 @@ export default {
     top: 150px;
     z-index: 10
 }
+/*
 #switchPad div:first-child {
   padding-top: 47px;
 }
